@@ -8,7 +8,11 @@ const anthropic = new Anthropic({
 
 export async function POST(request: Request) {
   try {
+    console.log('API Key exists:', !!process.env.ANTHROPIC_API_KEY);
+    console.log('API Key length:', process.env.ANTHROPIC_API_KEY?.length);
+    
     const { messages } = await request.json();
+    console.log('Received messages:', messages.length);
 
     // Security: Check for prompt injection attempts
     const userMessages = messages.filter((msg: any) => msg.role === 'user');
