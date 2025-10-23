@@ -125,6 +125,12 @@ Remember: You're having a conversation, not performing. Stay natural.`;
     });
   } catch (error) {
     console.error('Chat API error:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      apiKeyExists: !!process.env.ANTHROPIC_API_KEY,
+      apiKeyLength: process.env.ANTHROPIC_API_KEY?.length
+    });
     return Response.json({ error: 'Failed to process request' }, { status: 500 });
   }
 }
