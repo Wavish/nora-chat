@@ -65,17 +65,34 @@ export default function Home() {
           break;
         }
         const chunk = new TextDecoder().decode(value);
-        assistantResponse += chunk;
-        setMessages(prev => {
-          const lastMessage = prev[prev.length - 1];
-          if (lastMessage && lastMessage.role === 'assistant') {
-            return prev.map((msg, index) =>
-              index === prev.length - 1 ? { ...msg, content: assistantResponse } : msg
-            );
-          } else {
-            return [...prev, { role: 'assistant', content: assistantResponse }];
+        const lines = chunk.split('\n');
+        
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            const data = line.slice(6);
+            if (data === '[DONE]') {
+              break;
+            }
+            try {
+              const parsed = JSON.parse(data);
+              if (parsed.text) {
+                assistantResponse += parsed.text;
+                setMessages(prev => {
+                  const lastMessage = prev[prev.length - 1];
+                  if (lastMessage && lastMessage.role === 'assistant') {
+                    return prev.map((msg, index) =>
+                      index === prev.length - 1 ? { ...msg, content: assistantResponse } : msg
+                    );
+                  } else {
+                    return [...prev, { role: 'assistant', content: assistantResponse }];
+                  }
+                });
+              }
+            } catch (e) {
+              // Skip invalid JSON lines
+            }
           }
-        });
+        }
       }
     } catch (error) {
       console.error('Error:', error);
