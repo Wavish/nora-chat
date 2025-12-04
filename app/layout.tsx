@@ -36,6 +36,15 @@ export default function RootLayout({
                 }
               }
 
+              @keyframes fadeIn {
+                0% {
+                  opacity: 0;
+                }
+                100% {
+                  opacity: 1;
+                }
+              }
+
               .white-placeholder::placeholder {
                 color: #ffffff !important;
                 opacity: 1 !important;

@@ -12,6 +12,7 @@ export default function Home() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
+  const [showDownloadButton, setShowDownloadButton] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -29,6 +30,19 @@ export default function Home() {
       setSessionComplete(true);
     }
   }, [messages.length, sessionComplete]);
+
+  useEffect(() => {
+    // Wait for the final message to finish streaming, then add a pause before showing download button
+    if (sessionComplete && !isLoading && !showDownloadButton) {
+      console.log('Final message finished streaming, starting pause timer');
+      // Add a pause before showing the download button (3 seconds for mystique)
+      const pauseTimer = setTimeout(() => {
+        setShowDownloadButton(true);
+      }, 3000);
+      
+      return () => clearTimeout(pauseTimer);
+    }
+  }, [sessionComplete, isLoading, showDownloadButton]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,6 +143,7 @@ export default function Home() {
         loop
         muted
         playsInline
+        preload="auto"
         style={{
           position: 'fixed',
           top: 0,
@@ -139,7 +154,7 @@ export default function Home() {
           zIndex: -2
         }}
       >
-        <source src="/nora.mp4" type="video/mp4" />
+        <source src="/nora_3.mp4" type="video/mp4" />
       </video>
 
       {/* Logo Overlay */}
@@ -320,8 +335,14 @@ export default function Home() {
                 ↑
               </button>
             </form>
-          ) : (
-            <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          ) : showDownloadButton ? (
+            <div style={{ 
+              marginTop: '20px', 
+              textAlign: 'center',
+              animation: 'fadeIn 0.8s ease-out',
+              opacity: 0,
+              animationFillMode: 'forwards'
+            }}>
               <button
                 onClick={downloadTranscript}
                 style={{
@@ -346,7 +367,7 @@ export default function Home() {
                 📄 download our convo
               </button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </>
