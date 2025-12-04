@@ -241,9 +241,9 @@ export default function Home() {
                 <div
                   style={{
                     display: 'inline-block',
-                    padding: message.role === 'user' ? '12px 16px' : '12px 0px',
-                    borderRadius: message.role === 'user' ? '8px' : '0px',
-                    backgroundColor: message.role === 'user' ? 'transparent' : 'transparent',
+                    padding: message.role === 'user' ? '12px 16px' : '12px 16px',
+                    borderRadius: message.role === 'user' ? '8px' : '12px',
+                    backgroundColor: message.role === 'user' ? 'transparent' : 'rgba(0, 0, 0, 0.2)',
                     border: message.role === 'user' ? '1px solid #ffffff' : 'none',
                     color: '#ffffff',
                     maxWidth: '70%',
