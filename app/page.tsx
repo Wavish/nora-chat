@@ -154,7 +154,7 @@ export default function Home() {
           zIndex: -2
         }}
       >
-        <source src="/nora_3.mp4" type="video/mp4" />
+        <source src="/nora_3_crush.mp4" type="video/mp4" />
       </video>
 
       {/* Logo Overlay */}
