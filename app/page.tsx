@@ -168,11 +168,11 @@ export default function Home() {
       {/* Logo Overlay */}
       <div style={{
         position: 'fixed',
-        top: '50px',
-        left: '50px',
+        top: '35px',
+        left: '35px',
         zIndex: -1, // Below content, above video
-        width: '50%',
-        height: '50%'
+        width: '25%',
+        height: '25%'
       }}>
         <img
           src="/nora_logo.png"
