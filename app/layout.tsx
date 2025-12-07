@@ -13,6 +13,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Montagu+Slab:wght@400&display=swap" rel="stylesheet" />
         <style>{`
           @keyframes floatUp {
             0% {
@@ -53,7 +56,7 @@ export default function RootLayout({
       </head>
       <body style={{ 
         margin: 0, 
-        fontFamily: 'system-ui, sans-serif', 
+        fontFamily: '"Montagu Slab", serif', 
         backgroundColor: '#000000', 
         color: '#ffffff',
         minHeight: '100vh',

@@ -200,7 +200,7 @@ export default function Home() {
           margin: '0 auto',
           padding: '20px',
           color: '#ffffff',
-          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontFamily: '"Montagu Slab", serif',
           fontSize: '18px',
           fontWeight: 'bold',
           position: 'relative',
@@ -221,7 +221,7 @@ export default function Home() {
                 height: '90vh',
                 fontSize: '48px',
                 fontWeight: 'bold',
-                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontFamily: '"Montagu Slab", serif',
                 color: '#ffffff',
                 textAlign: 'left',
                 paddingBottom: '20px',
@@ -323,7 +323,7 @@ export default function Home() {
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   fontSize: '18px',
                   fontWeight: 'bold',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontFamily: '"Montagu Slab", serif',
                   opacity: 1,
                   width: '48px',
                   height: '48px',
@@ -354,7 +354,7 @@ export default function Home() {
                   cursor: 'pointer',
                   fontSize: '18px',
                   fontWeight: 'bold',
-                  fontFamily: 'Helvetica, Arial, sans-serif',
+                  fontFamily: '"Montagu Slab", serif',
                   transition: 'all 0.3s ease'
                 }}
                 onMouseOver={(e) => {
