@@ -24,12 +24,16 @@ export default function Home() {
   }, [messages]);
 
   useEffect(() => {
-    // Check if we've reached 16 interactions (8 exchanges), the last message is from the assistant, AND streaming has finished
-    if (messages.length >= 16 && !sessionComplete && messages[messages.length - 1]?.role === 'assistant' && !isLoading) {
-      console.log('Session complete triggered! Messages:', messages.length);
+    // Check if we've reached exactly 16 interactions (8 exchanges), the last message is from the assistant, AND streaming has finished
+    const userMessages = messages.filter(msg => msg.role === 'user').length;
+    const assistantMessages = messages.filter(msg => msg.role === 'assistant').length;
+    
+    // Only mark complete when we have exactly 8 user messages and 8 assistant messages (16 total)
+    if (messages.length === 16 && userMessages === 8 && assistantMessages === 8 && !sessionComplete && messages[messages.length - 1]?.role === 'assistant' && !isLoading) {
+      console.log('Session complete triggered! Messages:', messages.length, 'User:', userMessages, 'Assistant:', assistantMessages);
       setSessionComplete(true);
     }
-  }, [messages.length, sessionComplete, isLoading]);
+  }, [messages.length, sessionComplete, isLoading, messages]);
 
   useEffect(() => {
     // Wait for the final message to finish streaming AND session to be complete, then add a pause before showing download button

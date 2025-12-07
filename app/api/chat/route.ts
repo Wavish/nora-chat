@@ -37,6 +37,11 @@ export async function POST(request: Request) {
     const isFourthExchange = userMessageCount === 4 && assistantMessageCount === 3; // 4th user message, about to send 4th assistant response
     
     console.log('Message counts:', { userMessageCount, assistantMessageCount, totalMessages, isEighthExchange, isFourthExchange });
+    
+    // Safety check: Only allow conclusion on exactly the 8th exchange
+    if (isEighthExchange && userMessageCount !== 8) {
+      console.warn('Warning: isEighthExchange is true but userMessageCount is not 8:', userMessageCount);
+    }
 
     // Security: Check for prompt injection attempts
     const userMessages = messages.filter((msg: any) => msg.role === 'user');
