@@ -49,7 +49,7 @@ export default function RootLayout({
               }
 
               .white-placeholder::placeholder {
-                color: #ffffff !important;
+                color: #ccff00 !important;
                 opacity: 1 !important;
               }
         `}</style>
@@ -58,7 +58,7 @@ export default function RootLayout({
         margin: 0, 
         fontFamily: '"Montagu Slab", serif', 
         backgroundColor: '#000000', 
-        color: '#ffffff',
+        color: '#ccff00',
         minHeight: '100vh',
         position: 'relative'
       }}>

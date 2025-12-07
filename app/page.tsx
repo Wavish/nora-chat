@@ -199,7 +199,7 @@ export default function Home() {
           maxWidth: '800px',
           margin: '0 auto',
           padding: '20px',
-          color: '#ffffff',
+          color: '#ccff00',
           fontFamily: '"Montagu Slab", serif',
           fontSize: '18px',
           fontWeight: 'bold',
@@ -222,7 +222,7 @@ export default function Home() {
                 fontSize: '48px',
                 fontWeight: 'bold',
                 fontFamily: '"Montagu Slab", serif',
-                color: '#ffffff',
+                color: '#ccff00',
                 textAlign: 'left',
                 paddingBottom: '20px',
                 paddingLeft: '20px'
@@ -243,12 +243,12 @@ export default function Home() {
                     display: 'inline-block',
                     padding: message.role === 'user' ? '12px 16px' : '12px 16px',
                     borderRadius: message.role === 'user' ? '8px' : '12px',
-                    backgroundColor: message.role === 'user' ? 'transparent' : 'rgba(0, 0, 0, 0.2)',
-                    border: message.role === 'user' ? '1px solid #ffffff' : 'none',
-                    color: '#ffffff',
+                    backgroundColor: message.role === 'user' ? 'rgba(204, 255, 0, 0.4)' : 'rgba(255, 0, 114, 0.4)',
+                    border: 'none',
+                    color: '#ccff00',
                     maxWidth: '70%',
                     textAlign: 'left',
-                    fontSize: message.role === 'user' ? '18px' : '36px',
+                    fontSize: message.role === 'user' ? '30px' : '38px',
                     fontWeight: 'bold',
                     animation: message.role === 'user' ? 'floatUp 0.6s ease-out' : 'blurIn 0.8s ease-out',
                     opacity: message.role === 'assistant' ? 0 : 1,
@@ -268,11 +268,11 @@ export default function Home() {
               </div>
             ))}
             {isLoading && messages[messages.length - 1]?.role === 'user' && (
-              <div style={{ textAlign: 'left', color: '#ffffff' }}>
+              <div style={{ textAlign: 'left', color: '#ccff00' }}>
                 <div style={{
                   display: 'inline-block',
                   padding: '12px 0px',
-                  fontSize: '36px',
+                  fontSize: '38px',
                   fontWeight: 'bold',
                   animation: 'blurIn 0.8s ease-out',
                   opacity: 0,
@@ -301,13 +301,13 @@ export default function Home() {
                 style={{
                   flex: 1,
                   padding: '12px',
-                  border: '1px solid #ffffff',
+                  border: '1px solid #ccff00',
                   borderRadius: '8px',
-                  fontSize: '18px',
+                  fontSize: '30px',
                   fontWeight: 'bold',
-                  backgroundColor: '#FF007B',
-                  color: '#ffffff',
-                  fontFamily: 'Helvetica, Arial, sans-serif'
+                  backgroundColor: 'rgba(204, 255, 0, 0.4)',
+                  color: '#ccff00',
+                  fontFamily: '"Montagu Slab", serif'
                 }}
                 className="white-placeholder"
               />
@@ -316,12 +316,12 @@ export default function Home() {
                 disabled={isLoading || !input.trim()}
                 style={{
                   padding: '12px',
-                  backgroundColor: '#FF007B',
-                  color: '#ffffff',
-                  border: '1px solid #ffffff',
+                  backgroundColor: 'rgba(204, 255, 0, 0.4)',
+                  color: '#ccff00',
+                  border: '1px solid #ccff00',
                   borderRadius: '8px',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
-                  fontSize: '18px',
+                  fontSize: '30px',
                   fontWeight: 'bold',
                   fontFamily: '"Montagu Slab", serif',
                   opacity: 1,
@@ -347,21 +347,21 @@ export default function Home() {
                 onClick={downloadTranscript}
                 style={{
                   padding: '12px',
-                  backgroundColor: '#FF007B',
-                  color: '#ffffff',
-                  border: '1px solid #ffffff',
+                  backgroundColor: 'rgba(204, 255, 0, 0.4)',
+                  color: '#ccff00',
+                  border: '1px solid #ccff00',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  fontSize: '18px',
+                  fontSize: '30px',
                   fontWeight: 'bold',
                   fontFamily: '"Montagu Slab", serif',
                   transition: 'all 0.3s ease'
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.backgroundColor = '#E6006B';
+                  e.currentTarget.style.backgroundColor = 'rgba(204, 255, 0, 0.6)';
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.backgroundColor = '#FF007B';
+                  e.currentTarget.style.backgroundColor = 'rgba(204, 255, 0, 0.4)';
                 }}
               >
                 📄 download our convo
