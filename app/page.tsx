@@ -64,7 +64,8 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to get response: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({ error: response.statusText }));
+        throw new Error(errorData.error || errorData.details || `Failed to get response: ${response.statusText}`);
       }
 
       const reader = response.body?.getReader();
@@ -89,6 +90,9 @@ export default function Home() {
             }
             try {
               const parsed = JSON.parse(data);
+              if (parsed.error) {
+                throw new Error(parsed.error);
+              }
               if (parsed.text) {
                 assistantResponse += parsed.text;
                 setMessages(prev => {
@@ -103,6 +107,9 @@ export default function Home() {
                 });
               }
             } catch (e) {
+              if (e instanceof Error && e.message !== 'Unexpected end of JSON input') {
+                throw e;
+              }
               // Skip invalid JSON lines
             }
           }
@@ -110,7 +117,8 @@ export default function Home() {
       }
     } catch (error) {
       console.error('Error:', error);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Oops! Something went wrong. Please try again.' }]);
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+      setMessages(prev => [...prev, { role: 'assistant', content: `Oops! ${errorMessage}` }]);
     } finally {
       setIsLoading(false);
     }
@@ -160,17 +168,14 @@ export default function Home() {
       {/* Logo Overlay */}
       <div style={{
         position: 'fixed',
-        top: 0,
-        left: 0,
+        top: '50px',
+        left: '50px',
         zIndex: -1, // Below content, above video
-        width: '100vw',
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        width: '50%',
+        height: '50%'
       }}>
         <img
-          src="/nora.png"
+          src="/nora_logo.png"
           alt="Nora Logo"
           style={{
             width: '100%',

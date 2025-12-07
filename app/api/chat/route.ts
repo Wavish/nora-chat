@@ -100,7 +100,7 @@ Remember: You're having a conversation, not performing. Stay natural.`;
 
     // Create streaming response
     const stream = await anthropic.messages.stream({
-      model: 'claude-sonnet-4-20250514',
+      model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1024,
       system: systemPrompt,
       messages: messages,
@@ -121,7 +121,10 @@ Remember: You're having a conversation, not performing. Stay natural.`;
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (error) {
-          controller.error(error);
+          console.error('Stream error:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Unknown streaming error';
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ error: errorMessage })}\n\n`));
+          controller.close();
         }
       },
     });
@@ -141,6 +144,12 @@ Remember: You're having a conversation, not performing. Stay natural.`;
       apiKeyExists: !!process.env.ANTHROPIC_API_KEY,
       apiKeyLength: process.env.ANTHROPIC_API_KEY?.length
     });
-    return Response.json({ error: 'Failed to process request' }, { status: 500 });
+    
+    // Return more detailed error message
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ 
+      error: 'Failed to process request',
+      details: errorMessage 
+    }, { status: 500 });
   }
 }
