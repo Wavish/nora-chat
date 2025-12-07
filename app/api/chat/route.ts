@@ -4,14 +4,19 @@ import { loadKnowledgeBase } from '@/lib/knowledge-base';
 
 export async function POST(request: Request) {
   try {
-    // Check API key first
-    const apiKey = process.env.ANTHROPIC_API_KEY;
+    // Check API key first - try multiple possible env var names
+    const apiKey = process.env.ANTHROPIC_API_KEY || process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY;
     console.log('API Key exists:', !!apiKey);
     console.log('API Key length:', apiKey?.length);
+    console.log('All env vars with ANTHROPIC:', Object.keys(process.env).filter(k => k.includes('ANTHROPIC')));
     
-    if (!apiKey) {
+    if (!apiKey || apiKey.trim() === '') {
       return NextResponse.json({ 
-        error: 'API key not configured. Please set ANTHROPIC_API_KEY environment variable.' 
+        error: 'API key not configured. Please set ANTHROPIC_API_KEY environment variable in Vercel project settings and redeploy.',
+        debug: {
+          hasEnvVar: !!process.env.ANTHROPIC_API_KEY,
+          envVarLength: process.env.ANTHROPIC_API_KEY?.length || 0
+        }
       }, { status: 500 });
     }
 
