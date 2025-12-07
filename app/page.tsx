@@ -193,7 +193,9 @@ export default function Home() {
         left: 0,
         height: '100vh',
         width: '100vw',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center'
       }}>
 
         {/* Main Content */}
@@ -202,7 +204,7 @@ export default function Home() {
           flexDirection: 'column',
           height: '100vh',
           maxWidth: '800px',
-          margin: '0 auto',
+          width: '100%',
           padding: '20px',
           color: '#ccff00',
           fontFamily: '"Montagu Slab", serif',
