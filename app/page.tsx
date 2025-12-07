@@ -24,15 +24,15 @@ export default function Home() {
   }, [messages]);
 
   useEffect(() => {
-    // Check if we've reached 16 interactions (8 exchanges) and the last message is from the assistant
-    if (messages.length >= 16 && !sessionComplete && messages[messages.length - 1]?.role === 'assistant') {
+    // Check if we've reached 16 interactions (8 exchanges), the last message is from the assistant, AND streaming has finished
+    if (messages.length >= 16 && !sessionComplete && messages[messages.length - 1]?.role === 'assistant' && !isLoading) {
       console.log('Session complete triggered! Messages:', messages.length);
       setSessionComplete(true);
     }
-  }, [messages.length, sessionComplete]);
+  }, [messages.length, sessionComplete, isLoading]);
 
   useEffect(() => {
-    // Wait for the final message to finish streaming, then add a pause before showing download button
+    // Wait for the final message to finish streaming AND session to be complete, then add a pause before showing download button
     if (sessionComplete && !isLoading && !showDownloadButton) {
       console.log('Final message finished streaming, starting pause timer');
       // Add a pause before showing the download button (3 seconds for mystique)
