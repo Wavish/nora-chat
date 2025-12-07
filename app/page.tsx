@@ -301,12 +301,12 @@ export default function Home() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder={messages.length === 0 ? "reply to Nora... try 'feelings', 'the future', 'my place in the universe', 'cats'" : "reply to Nora..."}
+                placeholder="Talk to Nora about 'the future', or 'feelings', etc."
                 disabled={isLoading}
                 style={{
                   flex: 1,
                   padding: '12px',
-                  border: '1px solid #ccff00',
+                  border: 'none',
                   borderRadius: '8px',
                   fontSize: '30px',
                   fontWeight: 'bold',
@@ -323,7 +323,7 @@ export default function Home() {
                   padding: '12px',
                   backgroundColor: 'rgba(204, 255, 0, 0.4)',
                   color: '#ccff00',
-                  border: '1px solid #ccff00',
+                  border: 'none',
                   borderRadius: '8px',
                   cursor: isLoading ? 'not-allowed' : 'pointer',
                   fontSize: '30px',
@@ -331,7 +331,6 @@ export default function Home() {
                   fontFamily: '"Montagu Slab", serif',
                   opacity: 1,
                   width: '48px',
-                  height: '48px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center'
