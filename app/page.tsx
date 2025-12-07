@@ -303,7 +303,7 @@ export default function Home() {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Talk to Nora about 'the future', or 'feelings', etc."
+                placeholder={messages.length === 0 ? "Talk to Nora about 'the future', or 'feelings', etc." : ""}
                 disabled={isLoading}
                 style={{
                   flex: 1,
