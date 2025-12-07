@@ -2,14 +2,23 @@ import Anthropic from '@anthropic-ai/sdk';
 import { NextResponse } from 'next/server';
 import { loadKnowledgeBase } from '@/lib/knowledge-base';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 export async function POST(request: Request) {
   try {
-    console.log('API Key exists:', !!process.env.ANTHROPIC_API_KEY);
-    console.log('API Key length:', process.env.ANTHROPIC_API_KEY?.length);
+    // Check API key first
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    console.log('API Key exists:', !!apiKey);
+    console.log('API Key length:', apiKey?.length);
+    
+    if (!apiKey) {
+      return NextResponse.json({ 
+        error: 'API key not configured. Please set ANTHROPIC_API_KEY environment variable.' 
+      }, { status: 500 });
+    }
+
+    // Initialize Anthropic client with API key
+    const anthropic = new Anthropic({
+      apiKey: apiKey,
+    });
     
     const { messages } = await request.json();
     console.log('Received messages:', messages.length);
