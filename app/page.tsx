@@ -195,7 +195,8 @@ export default function Home() {
         width: '100vw',
         overflow: 'hidden',
         display: 'flex',
-        justifyContent: 'center'
+        justifyContent: 'flex-end',
+        paddingRight: '50px'
       }}>
 
         {/* Main Content */}
