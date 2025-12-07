@@ -204,7 +204,6 @@ export default function Home() {
           flexDirection: 'column',
           height: '100vh',
           maxWidth: '800px',
-          width: '100%',
           padding: '20px',
           color: '#ccff00',
           fontFamily: '"Montagu Slab", serif',
@@ -314,7 +313,8 @@ export default function Home() {
                   fontWeight: 'bold',
                   backgroundColor: 'rgba(204, 255, 0, 0.4)',
                   color: '#ccff00',
-                  fontFamily: '"Montagu Slab", serif'
+                  fontFamily: '"Montagu Slab", serif',
+                  caretColor: '#ccff00'
                 }}
                 className="white-placeholder"
               />
