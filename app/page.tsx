@@ -359,13 +359,6 @@ export default function Home() {
               alignItems: 'center',
               paddingBottom: '40px'
             }}>
-              <div style={{
-                fontSize: '18px',
-                color: '#ccff00',
-                maxWidth: '640px'
-              }}>
-                That’s all I’ve got. You can download our chat if you want to mull it over.
-              </div>
               <button
                 onClick={downloadTranscript}
                 style={{
