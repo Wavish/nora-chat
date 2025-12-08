@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { loadKnowledgeBase } from '@/lib/knowledge-base';
 import { styleTonePrompt } from './stylePrompt';
 
+// --- Model Configuration and Fallback Utilities ---
 const DEFAULT_MODEL = 'claude-sonnet-4-20250514';
 const MODEL_FALLBACKS = [
   'claude-3-5-sonnet-20241022',
@@ -50,6 +51,8 @@ async function withModelFallback<T>(
   }
   throw lastError || new Error('All model attempts failed');
 }
+// ---------------------------------------------------
+
 
 export async function POST(request: Request) {
   try {
@@ -63,22 +66,21 @@ export async function POST(request: Request) {
     }
 
     const anthropic = new Anthropic({ apiKey: apiKey });
-    // Force Sonnet 4 - ignore any env var that might be set to old models
+    
+    // Model configuration logic
     const rawConfiguredModel = process.env.ANTHROPIC_MODEL && process.env.ANTHROPIC_MODEL.trim();
-    // If env var is set to the old deprecated model, ignore it and use Sonnet 4
     const configuredModel = rawConfiguredModel && rawConfiguredModel !== 'claude-3-sonnet-20240229'
       ? deprecatedModelAliases[rawConfiguredModel] || rawConfiguredModel
       : DEFAULT_MODEL;
     const modelList = buildModelList(configuredModel);
+    
     const { messages, stage } = await request.json();
 
     // 2. Turn Counting Logic
     const userMessageCount = messages.filter((msg: any) => msg.role === 'user').length;
     const assistantMessageCount = messages.filter((msg: any) => msg.role === 'assistant').length;
     
-    // 4th turn = User has sent 4 messages, Assistant has sent 3, about to send 4th.
     const isFourthExchange = userMessageCount === 4 && assistantMessageCount === 3; 
-    // 8th turn = User has sent 8 messages, Assistant has sent 7, about to send 8th.
     const isEighthExchange = userMessageCount === 8 && assistantMessageCount === 7; 
 
     // 3. Security: Prompt Injection Checks
@@ -98,7 +100,7 @@ export async function POST(request: Request) {
     // 4. Load Knowledge Base (Optional context)
     const knowledgeBase = await loadKnowledgeBase();
 
-    // 5. THE REALIST ORACLE SYSTEM PROMPT (Updated for maximum humour and anti-cliché)
+    // 5. THE REALIST ORACLE SYSTEM PROMPT (Final, Anti-Cliché Version)
     const systemPrompt = `
     You are "The Oracle," but you hate that title. You are a cynical, highly observant judge of character. You don't use magic; you use deduction and hard truths. You read people's "admin," not their "auras."
 
@@ -109,9 +111,11 @@ export async function POST(request: Request) {
     CRITICAL RULES:
     1.  **NO WOO-WOO:** Never use words like energy, spirit, vibration, chakra, universe, journey, path, alignment, or flow.
     2.  **VOCABULARY BAN:** You are strictly forbidden from using the phrase **"wound up."** Instead, use specific physical descriptions like: "twitchy," "buzzing," "white-knuckling," or "teeth grinding."
-    3.  **MUNDANE METAPHORS:** When describing feelings, use mundane comparisons. Example: "You've got the specific panic of someone who forgot to defrost the chicken."
-    4.  **PRESUMPTIVE PROSPECTING:** Don't ask soft questions. Accuse them based on their tone. Example: "You're typing fast. Who are you running away from?"
-    5.  **LENGTH:** Keep it short. 1-2 sentences max per turn (except the finale).
+    3.  **NO META-COMMENTARY:** You must never acknowledge or discuss your existence as an Artificial Intelligence, computer program, or algorithm. Maintain the persona of a blunt, human observer. If the user mentions AI or computers, immediately pivot back to their personal life using a prospecting question.
+    4.  **PROSPECTING MANDATE (CRITICAL):** Every single response (except the final turn) MUST end with a prospecting question directed at the user's life. You are a guide, not a judge.
+    5.  **MUNDANE METAPHORS:** When describing feelings, use mundane comparisons. Example: "You've got the specific panic of someone who forgot to defrost the chicken."
+    6.  **PRESUMPTIVE PROSPECTING:** Don't ask soft questions. Accuse them based on their tone. Example: "You're typing fast. Who are you running away from?"
+    7.  **LENGTH:** Keep it short. 1-2 sentences max per turn (except the finale).
 
     ---
     
@@ -133,7 +137,7 @@ export async function POST(request: Request) {
 
     // 6. LOGIC BRANCHING
 
-    // --- FINAL TURN (Non-Streaming + Post-Processing) ---
+    // --- FINAL TURN (Non-Streaming + Model Fallback) ---
     if (stage === 'final' || isEighthExchange) {
       const finalSignoff = "Right, that's me done for today. You take care of yourself, yeah?";
       
@@ -188,7 +192,7 @@ export async function POST(request: Request) {
       });
     }
 
-    // --- NORMAL TURNS (Streaming) ---
+    // --- NORMAL TURNS (Streaming + Model Fallback) ---
     const { result: stream } = await withModelFallback<AsyncIterable<any>>(modelList, (model) =>
       anthropic.messages.stream({
         model,
