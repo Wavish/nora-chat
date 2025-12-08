@@ -13,6 +13,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [showDownloadButton, setShowDownloadButton] = useState(false);
+  const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -36,17 +37,18 @@ export default function Home() {
   }, [messages.length, sessionComplete, isLoading, messages]);
 
   useEffect(() => {
-    // Wait for the final message to finish streaming AND session to be complete, then add a pause before showing download button
-    if (sessionComplete && !isLoading && !showDownloadButton) {
+    // Wait for the final message to finish streaming AND session to be complete, then add a pause before showing download prompt/button
+    if (sessionComplete && !isLoading && !showDownloadButton && !showDownloadPrompt) {
       console.log('Final message finished streaming, starting pause timer');
       // Add a pause before showing the download button (3 seconds for mystique)
       const pauseTimer = setTimeout(() => {
+        setShowDownloadPrompt(true);
         setShowDownloadButton(true);
       }, 3000);
       
       return () => clearTimeout(pauseTimer);
     }
-  }, [sessionComplete, isLoading, showDownloadButton]);
+  }, [sessionComplete, isLoading, showDownloadButton, showDownloadPrompt]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -352,8 +354,21 @@ export default function Home() {
               textAlign: 'center',
               animation: 'fadeIn 0.8s ease-out',
               opacity: 0,
-              animationFillMode: 'forwards'
+              animationFillMode: 'forwards',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              alignItems: 'center'
             }}>
+              {showDownloadPrompt && (
+                <div style={{
+                  fontSize: '18px',
+                  color: '#ccff00',
+                  maxWidth: '640px'
+                }}>
+                  That’s all I’ve got for now. Want to download our chat and mull it over?
+                </div>
+              )}
               <button
                 onClick={downloadTranscript}
                 style={{

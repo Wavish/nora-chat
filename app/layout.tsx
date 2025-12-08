@@ -48,24 +48,9 @@ export default function RootLayout({
                 }
               }
 
-              @keyframes blink {
-                0%, 50% {
-                  opacity: 1;
-                }
-                51%, 100% {
-                  opacity: 0;
-                }
-              }
-
               .white-placeholder::placeholder {
                 color: #ccff00 !important;
                 opacity: 1 !important;
-              }
-
-              input:focus::after {
-                content: '|';
-                animation: blink 1s infinite;
-                color: #ccff00;
               }
         `}</style>
       </head>
