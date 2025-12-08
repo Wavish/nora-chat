@@ -3,6 +3,54 @@ import { NextResponse } from 'next/server';
 import { loadKnowledgeBase } from '@/lib/knowledge-base';
 import { styleTonePrompt } from './stylePrompt';
 
+const DEFAULT_MODEL = 'claude-sonnet-4-20250514';
+const MODEL_FALLBACKS = [
+  'claude-3-5-sonnet-20241022',
+  'claude-3-5-sonnet-20240620',
+  'claude-3-opus-20240229',
+  'claude-3-haiku-20240307',
+];
+
+const deprecatedModelAliases: Record<string, string> = {
+  'claude-3-sonnet-20240229': DEFAULT_MODEL,
+};
+
+function buildModelList(configuredModel?: string) {
+  const models = [configuredModel, DEFAULT_MODEL, ...MODEL_FALLBACKS].filter(Boolean) as string[];
+  return Array.from(new Set(models)); // dedupe while preserving order
+}
+
+function isModelNotFound(error: any): boolean {
+  if (!error) return false;
+  const errType = (error as any)?.error?.type;
+  const message = (error as any)?.error?.message || (error as any)?.message || '';
+  return errType === 'not_found_error' || /model/i.test(message);
+}
+
+async function withModelFallback<T>(
+  models: string[],
+  fn: (model: string) => Promise<T> | T
+): Promise<{ result: T; modelUsed: string }> {
+  let lastError: any;
+  const [primary] = models;
+  for (const model of models) {
+    try {
+      const result = await fn(model);
+      if (primary && model !== primary) {
+        console.warn('Anthropic model fallback applied', { from: primary, to: model });
+      }
+      return { result, modelUsed: model };
+    } catch (error) {
+      if (isModelNotFound(error)) {
+        lastError = error;
+        continue;
+      }
+      throw error;
+    }
+  }
+  throw lastError || new Error('All model attempts failed');
+}
+
 export async function POST(request: Request) {
   try {
     // 1. API Key Validation
@@ -15,6 +63,13 @@ export async function POST(request: Request) {
     }
 
     const anthropic = new Anthropic({ apiKey: apiKey });
+    // Force Sonnet 4 - ignore any env var that might be set to old models
+    const rawConfiguredModel = process.env.ANTHROPIC_MODEL && process.env.ANTHROPIC_MODEL.trim();
+    // If env var is set to the old deprecated model, ignore it and use Sonnet 4
+    const configuredModel = rawConfiguredModel && rawConfiguredModel !== 'claude-3-sonnet-20240229'
+      ? deprecatedModelAliases[rawConfiguredModel] || rawConfiguredModel
+      : DEFAULT_MODEL;
+    const modelList = buildModelList(configuredModel);
     const { messages, stage } = await request.json();
 
     // 2. Turn Counting Logic
@@ -82,12 +137,14 @@ export async function POST(request: Request) {
     if (stage === 'final' || isEighthExchange) {
       const finalSignoff = "Right, that's me done for today. You take care of yourself, yeah?";
       
-      const completion = await anthropic.messages.create({
-        model: 'claude-3-sonnet-20240229',
-        max_tokens: 1024,
-        system: systemPrompt,
-        messages: messages,
-      });
+      const { result: completion } = await withModelFallback(modelList, (model) =>
+        anthropic.messages.create({
+          model,
+          max_tokens: 1024,
+          system: systemPrompt,
+          messages: messages,
+        })
+      );
 
       const contentBlocks = completion.content
         .filter((block: any) => block.type === 'text')
@@ -132,12 +189,14 @@ export async function POST(request: Request) {
     }
 
     // --- NORMAL TURNS (Streaming) ---
-    const stream = await anthropic.messages.stream({
-      model: 'claude-3-sonnet-20240229',
-      max_tokens: 1024,
-      system: systemPrompt,
-      messages: messages,
-    });
+    const { result: stream } = await withModelFallback<AsyncIterable<any>>(modelList, (model) =>
+      anthropic.messages.stream({
+        model,
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: messages,
+      })
+    );
 
     const encoder = new TextEncoder();
     const readableStream = new ReadableStream({
