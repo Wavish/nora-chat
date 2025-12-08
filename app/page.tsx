@@ -308,7 +308,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={messages.length === 0 ? "Talk to Nora about 'the future', or 'feelings', etc." : ""}
-                disabled={isLoading}
+                disabled={isLoading || sessionComplete}
                 style={{
                   flex: 1,
                   padding: '12px',
@@ -325,7 +325,7 @@ export default function Home() {
               />
               <button
                 type="submit"
-                disabled={isLoading || !input.trim()}
+                disabled={isLoading || sessionComplete || !input.trim()}
                 style={{
                   padding: '12px',
                   backgroundColor: 'rgba(204, 255, 0, 0.4)',
@@ -356,7 +356,8 @@ export default function Home() {
               display: 'flex',
               flexDirection: 'column',
               gap: '12px',
-              alignItems: 'center'
+              alignItems: 'center',
+              paddingBottom: '40px'
             }}>
               <div style={{
                 fontSize: '18px',
