@@ -37,20 +37,14 @@ export default function Home() {
   }, [messages.length, sessionComplete, isLoading, messages]);
 
   useEffect(() => {
-    // After session completes and streaming finishes, add a brief pause, then insert the closing prompt as an assistant message, then show download button
+    // After session completes and streaming finishes, add a brief pause, then show download button (helper text outside chat)
     if (sessionComplete && !isLoading && !downloadPromptAdded) {
-      console.log('Final message finished streaming, starting closing prompt timer');
-      const promptTimer = setTimeout(() => {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'That’s all I’ve got. You can download our chat if you want to mull it over.' }]);
-        setDownloadPromptAdded(true);
-        // Slight additional delay before showing download button for pacing
-        const buttonTimer = setTimeout(() => {
-          setShowDownloadButton(true);
-        }, 500);
-        return () => clearTimeout(buttonTimer);
+      console.log('Final message finished streaming, starting download prompt timer');
+      setDownloadPromptAdded(true);
+      const buttonTimer = setTimeout(() => {
+        setShowDownloadButton(true);
       }, 1200);
-      
-      return () => clearTimeout(promptTimer);
+      return () => clearTimeout(buttonTimer);
     }
   }, [sessionComplete, isLoading, downloadPromptAdded, setMessages]);
 
@@ -358,8 +352,19 @@ export default function Home() {
               textAlign: 'center',
               animation: 'fadeIn 0.8s ease-out',
               opacity: 0,
-              animationFillMode: 'forwards'
+              animationFillMode: 'forwards',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              alignItems: 'center'
             }}>
+              <div style={{
+                fontSize: '18px',
+                color: '#ccff00',
+                maxWidth: '640px'
+              }}>
+                That’s all I’ve got. You can download our chat if you want to mull it over.
+              </div>
               <button
                 onClick={downloadTranscript}
                 style={{
