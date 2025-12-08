@@ -50,7 +50,8 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    const userCount = messages.filter(m => m.role === 'user').length;
+    if (!input.trim() || isLoading || sessionComplete || userCount >= 8) return;
 
     const userMessage: Message = { role: 'user', content: input };
     const newMessages = [...messages, userMessage];
@@ -59,12 +60,16 @@ export default function Home() {
     setIsLoading(true);
 
     try {
+      const userCount = newMessages.filter(m => m.role === 'user').length;
+      const assistantCount = newMessages.filter(m => m.role === 'assistant').length;
+      const stage = (userCount === 8 && assistantCount === 7) ? 'final' : 'normal';
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages, stage }),
       });
 
       if (!response.ok) {
@@ -330,7 +335,7 @@ export default function Home() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={messages.length === 0 ? "Talk to Nora about 'the future', or 'feelings', etc." : ""}
-                disabled={isLoading || sessionComplete}
+                disabled={isLoading || sessionComplete || messages.filter(m => m.role === 'user').length >= 8}
                 style={{
                   flex: 1,
                   padding: '12px',

@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       apiKey: apiKey,
     });
     
-    const { messages } = await request.json();
+    const { messages, stage } = await request.json();
     console.log('Received messages:', messages.length);
     
     // Count exchanges: each exchange = 1 user message + 1 assistant message = 2 messages
@@ -130,7 +130,51 @@ ${knowledgeBase ? `\nKnowledge Base:\n${knowledgeBase}` : ''}
 
 Remember: You're having a conversation, not performing. Stay natural.`;
 
-    // Create streaming response
+    const isFinalStage = stage === 'final' || isEighthExchange;
+
+    if (isFinalStage) {
+      // Final turn: non-stream, post-process to remove questions and enforce sign-off
+      const finalSignoff = "Right, that's me done for today. You take care of yourself, yeah?";
+      const completion = await anthropic.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1024,
+        system: systemPrompt,
+        messages: messages,
+      });
+
+      const contentBlocks = completion.content
+        .filter((block: any) => block.type === 'text')
+        .map((block: any) => block.text)
+        .join('\n\n');
+
+      // Remove any sentences with question marks to avoid interrogatives in the final
+      const sentences = contentBlocks.split(/(?<=[.!?])\s+/);
+      const filteredSentences = sentences.filter((s: string) => !s.includes('?'));
+      const filteredText = filteredSentences.join(' ').trim();
+
+      const finalText = filteredText.endsWith(finalSignoff)
+        ? filteredText
+        : `${filteredText}\n\n${finalSignoff}`;
+
+      const encoder = new TextEncoder();
+      const readableStream = new ReadableStream({
+        start(controller) {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ text: finalText })}\n\n`));
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+          controller.close();
+        }
+      });
+
+      return new Response(readableStream, {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive',
+        },
+      });
+    }
+
+    // Non-final turns: streaming response
     const stream = await anthropic.messages.stream({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1024,
