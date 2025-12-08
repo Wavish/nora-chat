@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       const finalSignoff = "Right, that's me done for today. You take care of yourself, yeah?";
       
       const completion = await anthropic.messages.create({
-        model: 'claude-3-5-sonnet-20240620',
+        model: 'claude-3-5-sonnet-20241022',
         max_tokens: 1024,
         system: systemPrompt,
         messages: messages,
@@ -133,7 +133,7 @@ export async function POST(request: Request) {
 
     // --- NORMAL TURNS (Streaming) ---
     const stream = await anthropic.messages.stream({
-      model: 'claude-3-5-sonnet-20240620',
+      model: 'claude-3-5-sonnet-20241022',
       max_tokens: 1024,
       system: systemPrompt,
       messages: messages,
