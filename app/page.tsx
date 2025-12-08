@@ -13,7 +13,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [sessionComplete, setSessionComplete] = useState(false);
   const [showDownloadButton, setShowDownloadButton] = useState(false);
-  const [showDownloadPrompt, setShowDownloadPrompt] = useState(false);
+  const [downloadPromptAdded, setDownloadPromptAdded] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -37,18 +37,22 @@ export default function Home() {
   }, [messages.length, sessionComplete, isLoading, messages]);
 
   useEffect(() => {
-    // Wait for the final message to finish streaming AND session to be complete, then add a pause before showing download prompt/button
-    if (sessionComplete && !isLoading && !showDownloadButton && !showDownloadPrompt) {
-      console.log('Final message finished streaming, starting pause timer');
-      // Add a pause before showing the download button (3 seconds for mystique)
-      const pauseTimer = setTimeout(() => {
-        setShowDownloadPrompt(true);
-        setShowDownloadButton(true);
-      }, 3000);
+    // After session completes and streaming finishes, add a brief pause, then insert the closing prompt as an assistant message, then show download button
+    if (sessionComplete && !isLoading && !downloadPromptAdded) {
+      console.log('Final message finished streaming, starting closing prompt timer');
+      const promptTimer = setTimeout(() => {
+        setMessages(prev => [...prev, { role: 'assistant', content: 'That’s all I’ve got for now. Want to download our chat and mull it over?' }]);
+        setDownloadPromptAdded(true);
+        // Slight additional delay before showing download button for pacing
+        const buttonTimer = setTimeout(() => {
+          setShowDownloadButton(true);
+        }, 500);
+        return () => clearTimeout(buttonTimer);
+      }, 1200);
       
-      return () => clearTimeout(pauseTimer);
+      return () => clearTimeout(promptTimer);
     }
-  }, [sessionComplete, isLoading, showDownloadButton, showDownloadPrompt]);
+  }, [sessionComplete, isLoading, downloadPromptAdded, setMessages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -354,21 +358,8 @@ export default function Home() {
               textAlign: 'center',
               animation: 'fadeIn 0.8s ease-out',
               opacity: 0,
-              animationFillMode: 'forwards',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              alignItems: 'center'
+              animationFillMode: 'forwards'
             }}>
-              {showDownloadPrompt && (
-                <div style={{
-                  fontSize: '18px',
-                  color: '#ccff00',
-                  maxWidth: '640px'
-                }}>
-                  That’s all I’ve got for now. Want to download our chat and mull it over?
-                </div>
-              )}
               <button
                 onClick={downloadTranscript}
                 style={{
