@@ -169,6 +169,28 @@ export default function Home() {
         <source src="/nora_3_crush.mp4" type="video/mp4" />
       </video>
 
+      {/* Background Image Overlay */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+        zIndex: -1, // Above video, below logo/content
+        overflow: 'hidden',
+        pointerEvents: 'none'
+      }}>
+        <img
+          src="/bg.png"
+          alt="Background overlay"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover'
+          }}
+        />
+      </div>
+
       {/* Logo Overlay */}
       <div style={{
         position: 'fixed',
