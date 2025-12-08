@@ -200,7 +200,7 @@ export default function Home() {
         overflow: 'hidden',
         display: 'flex',
         justifyContent: 'flex-end',
-        paddingRight: '50px'
+        paddingRight: '60px'
       }}>
 
         {/* Main Content */}
