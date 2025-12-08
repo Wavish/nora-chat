@@ -144,10 +144,25 @@ Remember: You're having a conversation, not performing. Stay natural.`;
         .map((block: any) => block.text)
         .join('\n\n');
 
-      // Remove any sentences with question marks to avoid interrogatives in the final
+      // Remove any sentences with question marks or premature sign-offs to avoid interrogatives and duplicate sign-offs
       const sentences = contentBlocks.split(/(?<=[.!?])\s+/);
-      const filteredSentences = sentences.filter((s: string) => !s.includes('?'));
-      const filteredText = filteredSentences.join(' ').trim();
+      const signoffKeywords = [
+        "that's me done",
+        "take care of yourself",
+        "look after yourself",
+        "that's all i'm getting",
+        "look after yourself, won't you",
+        "look after yourself, won’t you",
+        "that's all i’m getting",
+        "that's all i’m getting for you"
+      ];
+      const filteredSentences = sentences.filter((s: string) => {
+        const lower = s.toLowerCase();
+        const hasQuestion = lower.includes('?');
+        const hasSignoff = signoffKeywords.some(k => lower.includes(k));
+        return !hasQuestion && !hasSignoff;
+      });
+      const filteredText = filteredSentences.join(' ').trim() || contentBlocks.trim();
 
       const finalText = filteredText.endsWith(finalSignoff)
         ? filteredText
