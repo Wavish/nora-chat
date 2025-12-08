@@ -41,7 +41,7 @@ export default function Home() {
     if (sessionComplete && !isLoading && !downloadPromptAdded) {
       console.log('Final message finished streaming, starting closing prompt timer');
       const promptTimer = setTimeout(() => {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'Want to download our chat and mull it over?' }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: 'That’s all I’ve got. You can download our chat if you want to mull it over.' }]);
         setDownloadPromptAdded(true);
         // Slight additional delay before showing download button for pacing
         const buttonTimer = setTimeout(() => {
