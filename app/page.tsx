@@ -199,8 +199,7 @@ export default function Home() {
         width: '100vw',
         overflow: 'hidden',
         display: 'flex',
-        justifyContent: 'flex-end',
-        paddingRight: '150px'
+        justifyContent: 'flex-end'
       }}>
 
         {/* Main Content */}
@@ -210,6 +209,7 @@ export default function Home() {
           height: '100vh',
           maxWidth: '800px',
           padding: '20px',
+          marginRight: '150px',
           color: '#ccff00',
           fontFamily: '"Montagu Slab", serif',
           fontSize: '18px',
