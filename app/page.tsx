@@ -346,7 +346,7 @@ export default function Home() {
                 ↑
               </button>
             </form>
-          ) : showDownloadButton ? (
+          ) : (showDownloadButton || downloadPromptAdded) ? (
             <div style={{ 
               marginTop: '20px', 
               textAlign: 'center',
